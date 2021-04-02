@@ -9,8 +9,8 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows.Forms;
 using EasyMKVSubs.Properties;
-using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Security.Cryptography;
 
 namespace EasySubs
 {
@@ -159,20 +159,26 @@ namespace EasySubs
 			if (!File.Exists(Application.StartupPath + "libs/ffmpeg.exe"))
 			{
 				MessageBox.Show("Файл ffmpeg.exe не найден, хотите, пойти на.... установить?", "Ошибка");
-				
+				using (var client = new WebClient())
+				{
+					client.DownloadFile("https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.3.2-2021-02-27-full_build.7z", "ffmpeg.7z");
+				}
+				FastZip fastZip = new FastZip();
+				string fileFilter = null;
+				fastZip.ExtractZip("ffmpeg.7z", "/libs/", fileFilter);
 				Environment.Exit(0);
 			}
 			if (NetworkInterface.GetIsNetworkAvailable())	
 			{
 				try
 				{
-					this.actual = webClient.DownloadString("https://raw.githubusercontent.com/keRRR0/EasyMKVSubs/master/version");
+					this.actual = webClient.DownloadString("https://raw.githubusercontent.com/toxic-devoloper/EasyMKVSubs/master/version");
 					if (int.TryParse(this.actual, out this.res))
 					{
 						this.version.Text = string.Format("Версия: {0}   Последняя доступная: {1}", this.ver, this.actual);
 						if (this.res > this.ver && MessageBox.Show("Доступна новая версия. Скачать?", "Обновление", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
 						{
-							Process.Start("https://github.com/keRRR0/EasyMKVSubs/raw/master/EasyMKVSubs.zip");
+							Process.Start("ZAMENIT_URL_BLYAT");
 							this.kill();
 							Environment.Exit(0);
 						}
